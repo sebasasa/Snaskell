@@ -2,7 +2,7 @@
 {-# LANGUAGE NoRebindableSyntax #-}
 {-# OPTIONS_GHC -fno-warn-missing-import-lists #-}
 {-# OPTIONS_GHC -w #-}
-module Paths_HaskellGame (
+module Paths_HaskellSnake (
     version,
     getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir,
     getDataFileName, getSysconfDir
@@ -43,18 +43,18 @@ getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: 
 
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 bindir     = "/Users/bndtlab2/.cabal/bin"
-libdir     = "/Users/bndtlab2/.cabal/lib/x86_64-osx-ghc-8.10.7/HaskellGame-0.1.0.0-inplace-HaskellGame"
+libdir     = "/Users/bndtlab2/.cabal/lib/x86_64-osx-ghc-8.10.7/HaskellSnake-0.1.0.0-inplace-HaskellSnake"
 dynlibdir  = "/Users/bndtlab2/.cabal/lib/x86_64-osx-ghc-8.10.7"
-datadir    = "/Users/bndtlab2/.cabal/share/x86_64-osx-ghc-8.10.7/HaskellGame-0.1.0.0"
-libexecdir = "/Users/bndtlab2/.cabal/libexec/x86_64-osx-ghc-8.10.7/HaskellGame-0.1.0.0"
+datadir    = "/Users/bndtlab2/.cabal/share/x86_64-osx-ghc-8.10.7/HaskellSnake-0.1.0.0"
+libexecdir = "/Users/bndtlab2/.cabal/libexec/x86_64-osx-ghc-8.10.7/HaskellSnake-0.1.0.0"
 sysconfdir = "/Users/bndtlab2/.cabal/etc"
 
-getBinDir     = catchIO (getEnv "HaskellGame_bindir")     (\_ -> return bindir)
-getLibDir     = catchIO (getEnv "HaskellGame_libdir")     (\_ -> return libdir)
-getDynLibDir  = catchIO (getEnv "HaskellGame_dynlibdir")  (\_ -> return dynlibdir)
-getDataDir    = catchIO (getEnv "HaskellGame_datadir")    (\_ -> return datadir)
-getLibexecDir = catchIO (getEnv "HaskellGame_libexecdir") (\_ -> return libexecdir)
-getSysconfDir = catchIO (getEnv "HaskellGame_sysconfdir") (\_ -> return sysconfdir)
+getBinDir     = catchIO (getEnv "HaskellSnake_bindir")     (\_ -> return bindir)
+getLibDir     = catchIO (getEnv "HaskellSnake_libdir")     (\_ -> return libdir)
+getDynLibDir  = catchIO (getEnv "HaskellSnake_dynlibdir")  (\_ -> return dynlibdir)
+getDataDir    = catchIO (getEnv "HaskellSnake_datadir")    (\_ -> return datadir)
+getLibexecDir = catchIO (getEnv "HaskellSnake_libexecdir") (\_ -> return libexecdir)
+getSysconfDir = catchIO (getEnv "HaskellSnake_sysconfdir") (\_ -> return sysconfdir)
 
 
 
