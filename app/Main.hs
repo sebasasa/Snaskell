@@ -64,8 +64,8 @@ listOfRandom = map clipToRange (randomInts 100 randomSeed)
 
 initialGame :: Game
 initialGame = Game {
-    positionX = [5 * gridSize, 4 * gridSize, 3 * gridSize],
-    positionY = [5 * gridSize, 5 * gridSize, 5 * gridSize],
+    positionX = replicate 5 (-5 * gridSize) ,
+    positionY = replicate 5 (0 * gridSize),
     direction = dirRight,
     foodPositionX = 7 * gridSize,
     foodPositionY = 7 * gridSize,
@@ -85,7 +85,7 @@ renderSnake :: Game -> [Picture]
 renderSnake gameState = map (renderSegment (length $ positionX gameState)) (zip [0..] (zip (positionX gameState) (positionY gameState)))
 
 renderFood :: Game -> [Picture]
-renderFood gameState = [translate (foodPositionX gameState) (foodPositionY gameState) $ color (light blue) $ rectangleWire gridSize gridSize]
+renderFood gameState = [translate (foodPositionX gameState) (foodPositionY gameState) $ color (makeColor 1 1 1 0.5) $ rectangleWire gridSize gridSize]
 
 renderGameViewport :: [Picture]
 renderGameViewport = [color (dark white) $ rectangleWire (fromIntegral windowWidth + 1) (fromIntegral windowHeight + 1)]
