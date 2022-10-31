@@ -51,7 +51,7 @@ randomInts :: Int -> Int -> [Int]
 randomInts n seed = take n $ unfoldr (Just . random) (mkStdGen seed)
 
 range :: Int
-range = (min windowHeight windowWidth)
+range = ((min windowHeight windowWidth) - round gridSize)
 
 toInt :: Float -> Int
 toInt = round
