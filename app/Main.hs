@@ -51,7 +51,7 @@ randomInts :: Int -> Int -> [Int]
 randomInts n seed = take n $ unfoldr (Just . random) (mkStdGen seed)
 
 range :: Int
-range = ((min windowHeight windowWidth) - round gridSize)
+range = min windowHeight windowWidth - round gridSize
 
 toInt :: Float -> Int
 toInt = round
@@ -159,7 +159,6 @@ nextFrame stepSize game = colideWithSelf $ colideWithFood $ warpBounds (moveSnak
 
 main :: IO ()
 main = do
-    print listOfRandom
     play
         windowDisplay
         (makeColor 0 0.01 0.05 1)
