@@ -7,10 +7,9 @@ import System.Random
 import Data.List
 
 -- TODO 
--- Acomodar la ventana para que no comience realmente desde cero (De esa forma arreglamos el error de rounding)
--- Implementar colision con sigo misma
 -- Hacer una pantalla de inicio (Presiona cualquier tecla (W A S D) apara empezar , Pulsa esc para cerrar )
 -- Hacer todo el codigo un poco mas limpio y modular 
+-- Eliminar uso de coordenadas absolutas, lleva todo a las coordenadas de la cuadricula y solo transforma a gridsize cuando estes renderizando
 
 windowWidth :: Int
 windowWidth = 300
@@ -64,13 +63,15 @@ listOfRandom = map clipToRange (randomInts 100 randomSeed)
 
 initialGame :: Game
 initialGame = Game {
-    positionX = replicate 5 (-5 * gridSize) ,
-    positionY = replicate 5 (0 * gridSize),
+    positionX = -5*gridSize : replicate 5 infinity ,
+    positionY = -1*gridSize : replicate 5 infinity,
     direction = dirRight,
     foodPositionX = 7 * gridSize,
     foodPositionY = 7 * gridSize,
     score = 0
 }
+
+snake game = zip (positionX game) (positionY game)
 
 
 render :: Game -> Picture
@@ -79,16 +80,17 @@ generateColor :: Float -> Float -> Picture -> Picture
 generateColor index totalSize = color (makeColor 1 ((((totalSize - index)/totalSize))) 0 ((((totalSize - index)/totalSize) + 1)/2))
 
 renderSegment :: Int -> (Float , (Float, Float)) -> Picture
-renderSegment size tuple = translate (fst (snd tuple)) (snd (snd tuple)) $ generateColor (fst tuple) (fromIntegral size)  $ rectangleWire gridSize gridSize
+renderSegment size tuple = translate (gridSize/2) (gridSize/2) $ translate (fst (snd tuple)) (snd (snd tuple)) $ generateColor (fst tuple) (fromIntegral size)  $ rectangleWire gridSize gridSize
 
 renderSnake :: Game -> [Picture]
 renderSnake gameState = map (renderSegment (length $ positionX gameState)) (zip [0..] (zip (positionX gameState) (positionY gameState)))
 
 renderFood :: Game -> [Picture]
-renderFood gameState = [translate (foodPositionX gameState) (foodPositionY gameState) $ color (makeColor 1 1 1 0.5) $ rectangleWire gridSize gridSize]
+renderFood gameState = [translate (gridSize/2) (gridSize/2) $ translate (foodPositionX gameState) (foodPositionY gameState) $ color (makeColor 1 1 1 0.5) $ rectangleWire gridSize gridSize]
 
 renderGameViewport :: [Picture]
 renderGameViewport = [color (dark white) $ rectangleWire (fromIntegral windowWidth + 1) (fromIntegral windowHeight + 1)]
+
 
 render gameState =
     pictures $ renderSnake gameState ++ renderFood gameState ++ renderGameViewport
@@ -97,10 +99,10 @@ render gameState =
 
 handleInput :: Event -> Game -> Game
 
-handleInput (EventKey (Char 'w') _ _ _) game = game { direction = dirUp    }
-handleInput (EventKey (Char 's') _ _ _) game = game { direction = dirDown  }
-handleInput (EventKey (Char 'a') _ _ _) game = game { direction = dirLeft  }
-handleInput (EventKey (Char 'd') _ _ _) game = game { direction = dirRight }
+handleInput (EventKey (Char 'w') _ _ _) game = game { direction = if direction game == dirDown then dirDown else dirUp}
+handleInput (EventKey (Char 's') _ _ _) game = game { direction = if direction game == dirUp then dirUp else dirDown  }
+handleInput (EventKey (Char 'a') _ _ _) game = game { direction = if direction game == dirRight then dirRight else dirLeft  }
+handleInput (EventKey (Char 'd') _ _ _) game = game { direction = if direction game == dirLeft then dirLeft else dirRight }
 handleInput _ game = game
 
 
@@ -129,12 +131,12 @@ warpBounds :: Game -> Game
 warpBounds game
   | head (positionX game) >=  (fromIntegral windowWidth/2) = game{
     positionX = (-fromIntegral windowWidth/2) : tail (positionX game)}
-  | head (positionX game) <= -(fromIntegral windowWidth/2) = game{
-    positionX = (fromIntegral windowWidth/2) : tail (positionX game)}
+  | head (positionX game) < -(fromIntegral windowWidth/2) = game{
+    positionX = (fromIntegral windowWidth/2 - gridSize) : tail (positionX game)}
   | head (positionY game) >=  (fromIntegral windowWidth/2) = game{
     positionY = (-fromIntegral windowWidth/2) : tail (positionY game)}
-  | head (positionY game) <= -(fromIntegral windowWidth/2) = game{
-    positionY = (fromIntegral windowWidth/2) : tail (positionY game)}
+  | head (positionY game) < -(fromIntegral windowWidth/2) = game{
+    positionY = (fromIntegral windowWidth/2) - gridSize : tail (positionY game)}
   | otherwise = game
 
 
@@ -151,8 +153,15 @@ colideWithFood game = if (head (positionX game) == foodPositionX game) && (head 
 
 } else game
 
+headRepeated :: Eq a => [a] -> Bool
+headRepeated list = head list `elem` tail list
+
+
 colideWithSelf :: Game -> Game
-colideWithSelf game = game
+colideWithSelf game = if score game > 2 then
+  if headRepeated (zip (positionX game) (positionY game)) then initialGame else game
+  else game
+
 
 nextFrame :: Float -> Game -> Game
 nextFrame stepSize game = colideWithSelf $ colideWithFood $ warpBounds (moveSnake game)
